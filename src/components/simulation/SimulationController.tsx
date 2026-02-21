@@ -14,10 +14,13 @@ export function SimulationController() {
     unlockAchievement,
     updateAgentStatus,
     triggerCrisis,
-    crisisEvent
+    crisisEvent,
+    processPayroll,
+    earnRevenue
   } = useBusinessStore();
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const dayCounterRef = useRef(0);
 
   useEffect(() => {
     if (appMode !== 'simulation') {
@@ -26,7 +29,7 @@ export function SimulationController() {
     }
 
     intervalRef.current = setInterval(() => {
-        // 1. Agent Logic
+        // 1. Agent Logic (Random Activity)
         agents.forEach(agent => {
             if (Math.random() > 0.8) {
                 const statuses: any[] = ['working', 'thinking', 'break', 'idle'];
@@ -35,8 +38,23 @@ export function SimulationController() {
             }
         });
 
-        // 2. Crisis Event (Random 5% chance)
-        if (!crisisEvent && Math.random() < 0.05) {
+        // 2. Tycoon Logic (Day Counter)
+        dayCounterRef.current += 1;
+
+        // Every 10 ticks (approx 30s) = Pay Day
+        if (dayCounterRef.current % 10 === 0) {
+            processPayroll();
+            toast("Payroll Processed", { description: "Salaries deducted from account." });
+        }
+
+        // Random Revenue Event (Small contracts)
+        if (Math.random() < 0.1) {
+            const amount = Math.floor(Math.random() * 500) + 100;
+            earnRevenue(amount, "Micro-transaction");
+        }
+
+        // 3. Crisis Event (Random 2% chance)
+        if (!crisisEvent && Math.random() < 0.02) {
              triggerCrisis({
                  id: crypto.randomUUID(),
                  title: 'Server Outage',
@@ -45,27 +63,28 @@ export function SimulationController() {
              });
         }
 
-    }, 3000);
+    }, 3000); // Tick every 3 seconds
 
     return () => {
         if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [appMode, agents, crisisEvent, updateAgentStatus, triggerCrisis]);
+  }, [appMode, agents, crisisEvent, updateAgentStatus, triggerCrisis, processPayroll, earnRevenue]);
 
   // Achievement Checks (Run whenever tasks change)
   useEffect(() => {
       if (tasks.some(t => t.status === 'done') && !achievements.includes('first_task')) {
           unlockAchievement('first_task');
           toast.success("Achievement Unlocked: Executor!");
+          earnRevenue(1000, "Series A Bonus"); // Bonus for first task
       }
-       if (agents.length > 1 && !achievements.includes('first_hire')) { // >1 because CEO is agent 0
+       if (agents.length > 1 && !achievements.includes('first_hire')) {
           unlockAchievement('first_hire');
            toast.success("Achievement Unlocked: Team Builder!");
       }
       if (!achievements.includes('incorporation')) {
           unlockAchievement('incorporation');
       }
-  }, [tasks, agents, achievements, unlockAchievement]);
+  }, [tasks, agents, achievements, unlockAchievement, earnRevenue]);
 
   return null;
 }

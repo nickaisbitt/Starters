@@ -14,6 +14,12 @@ interface BusinessState {
   agents: Agent[];
   tasks: Task[];
 
+  // Tycoon Economics
+  cash: number;
+  expenses: number;
+  transactionHistory: { id: string, amount: number, description: string, date: string }[];
+  nodePositions: Record<string, { x: number, y: number }>;
+
   // UI
   appMode: AppMode;
   isSidebarOpen: boolean;
@@ -40,6 +46,9 @@ interface BusinessState {
   addTask: (task: Task) => void;
   updateTask: (taskId: string, update: Partial<Task>) => void;
   updateAgentStatus: (agentId: string, status: Agent['status']) => void;
+  updateNodePosition: (nodeId: string, position: { x: number, y: number }) => void;
+  processPayroll: () => void;
+  earnRevenue: (amount: number, source: string) => void;
   reset: () => void;
 }
 
@@ -55,6 +64,10 @@ const initialState = {
   departments: [],
   agents: [],
   tasks: [],
+  cash: 50000, // Starting capital
+  expenses: 0,
+  transactionHistory: [],
+  nodePositions: {},
   appMode: 'saas' as AppMode,
   isSidebarOpen: true,
   theme: 'light' as const,
@@ -115,14 +128,58 @@ export const useBusinessStore = create<BusinessState>()(
         agents: state.agents.map((a) => (a.id === agentId ? { ...a, status } : a)),
       })),
 
+      updateNodePosition: (nodeId, position) => set((state) => ({
+          nodePositions: { ...state.nodePositions, [nodeId]: position }
+      })),
+
+      // Tycoon Logic
+      processPayroll: () => set((state) => {
+          const payroll = state.agents.length * 2000; // $2k per agent per month
+          const newCash = state.cash - payroll;
+          const transaction = {
+              id: crypto.randomUUID(),
+              amount: -payroll,
+              description: 'Payroll',
+              date: state.systemDate
+          };
+
+          if (newCash < 0 && !state.crisisEvent) {
+               return {
+                   cash: newCash,
+                   transactionHistory: [...state.transactionHistory, transaction],
+                   expenses: payroll,
+                   crisisEvent: {
+                       id: crypto.randomUUID(),
+                       title: 'BANKRUPTCY IMMINENT',
+                       description: 'You have run out of cash! Complete tasks to earn revenue or fire agents.',
+                       severity: 'high'
+                   }
+               };
+          }
+
+          return {
+              cash: newCash,
+              transactionHistory: [...state.transactionHistory, transaction],
+              expenses: payroll
+          };
+      }),
+
+      earnRevenue: (amount, source) => set((state) => ({
+          cash: state.cash + amount,
+          transactionHistory: [...state.transactionHistory, {
+              id: crypto.randomUUID(),
+              amount,
+              description: source,
+              date: state.systemDate
+          }]
+      })),
+
       reset: () => set(initialState)
     }),
     {
       name: 'genesis-os-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
-        // We persist everything except UI toggles usually, but here we persist mostly everything
-        // to ensure the simulation continues
         onboardingStep: state.onboardingStep,
         messages: state.messages,
         businessProfile: state.businessProfile,
@@ -132,7 +189,11 @@ export const useBusinessStore = create<BusinessState>()(
         appMode: state.appMode,
         achievements: state.achievements,
         systemDate: state.systemDate,
-        theme: state.theme
+        theme: state.theme,
+        cash: state.cash,
+        expenses: state.expenses,
+        transactionHistory: state.transactionHistory,
+        nodePositions: state.nodePositions
       }),
     }
   )
