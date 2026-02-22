@@ -1,5 +1,6 @@
 // src/store/useBusinessStore.ts
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { Agent, AppMode, BusinessProfile, Department, Message, OnboardingStep, Task } from '../types';
 
 interface BusinessState {
@@ -39,10 +40,11 @@ interface BusinessState {
   addTask: (task: Task) => void;
   updateTask: (taskId: string, update: Partial<Task>) => void;
   updateAgentStatus: (agentId: string, status: Agent['status']) => void;
+  reset: () => void;
 }
 
-export const useBusinessStore = create<BusinessState>((set) => ({
-  onboardingStep: 'intro',
+const initialState = {
+  onboardingStep: 'intro' as OnboardingStep,
   messages: [],
   businessProfile: {
     name: '',
@@ -53,57 +55,85 @@ export const useBusinessStore = create<BusinessState>((set) => ({
   departments: [],
   agents: [],
   tasks: [],
-  appMode: 'saas',
+  appMode: 'saas' as AppMode,
   isSidebarOpen: true,
-  theme: 'light',
+  theme: 'light' as const,
   systemDate: new Date().toISOString(),
   achievements: [],
   crisisEvent: null,
+};
 
-  setAppMode: (mode) => set({ appMode: mode }),
-  advanceSystemDate: (days) => set((state) => {
-    const newDate = new Date(state.systemDate);
-    newDate.setDate(newDate.getDate() + days);
-    return { systemDate: newDate.toISOString() };
-  }),
-  unlockAchievement: (id) => set((state) => {
-      if (state.achievements.includes(id)) return {};
-      return { achievements: [...state.achievements, id] };
-  }),
-  triggerCrisis: (event) => set({ crisisEvent: event }),
-  resolveCrisis: () => set({ crisisEvent: null }),
-  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
-  toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
-  setOnboardingStep: (step) => set({ onboardingStep: step }),
+export const useBusinessStore = create<BusinessState>()(
+  persist(
+    (set) => ({
+      ...initialState,
 
-  addMessage: (role, content) => set((state) => ({
-    messages: [
-      ...state.messages,
-      {
-        id: crypto.randomUUID(),
-        role,
-        content,
-        timestamp: Date.now(),
-      },
-    ],
-  })),
+      setAppMode: (mode) => set({ appMode: mode }),
+      advanceSystemDate: (days) => set((state) => {
+        const newDate = new Date(state.systemDate);
+        newDate.setDate(newDate.getDate() + days);
+        return { systemDate: newDate.toISOString() };
+      }),
+      unlockAchievement: (id) => set((state) => {
+          if (state.achievements.includes(id)) return {};
+          return { achievements: [...state.achievements, id] };
+      }),
+      triggerCrisis: (event) => set({ crisisEvent: event }),
+      resolveCrisis: () => set({ crisisEvent: null }),
+      toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+      toggleTheme: () => set((state) => ({ theme: state.theme === 'light' ? 'dark' : 'light' })),
+      setOnboardingStep: (step) => set({ onboardingStep: step }),
 
-  updateBusinessProfile: (profile) => set((state) => ({
-    businessProfile: { ...state.businessProfile, ...profile },
-  })),
+      addMessage: (role, content) => set((state) => ({
+        messages: [
+          ...state.messages,
+          {
+            id: crypto.randomUUID(),
+            role,
+            content,
+            timestamp: Date.now(),
+          },
+        ],
+      })),
 
-  setDepartments: (departments) => set({ departments }),
-  setAgents: (agents) => set({ agents }),
-  addAgent: (agent) => set((state) => ({ agents: [...state.agents, agent] })),
-  setTasks: (tasks) => set({ tasks }),
+      updateBusinessProfile: (profile) => set((state) => ({
+        businessProfile: { ...state.businessProfile, ...profile },
+      })),
 
-  addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
+      setDepartments: (departments) => set({ departments }),
+      setAgents: (agents) => set({ agents }),
+      addAgent: (agent) => set((state) => ({ agents: [...state.agents, agent] })),
+      setTasks: (tasks) => set({ tasks }),
 
-  updateTask: (taskId, update) => set((state) => ({
-    tasks: state.tasks.map((t) => (t.id === taskId ? { ...t, ...update } : t)),
-  })),
+      addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
 
-  updateAgentStatus: (agentId, status) => set((state) => ({
-    agents: state.agents.map((a) => (a.id === agentId ? { ...a, status } : a)),
-  })),
-}));
+      updateTask: (taskId, update) => set((state) => ({
+        tasks: state.tasks.map((t) => (t.id === taskId ? { ...t, ...update } : t)),
+      })),
+
+      updateAgentStatus: (agentId, status) => set((state) => ({
+        agents: state.agents.map((a) => (a.id === agentId ? { ...a, status } : a)),
+      })),
+
+      reset: () => set(initialState)
+    }),
+    {
+      name: 'genesis-os-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        // We persist everything except UI toggles usually, but here we persist mostly everything
+        // to ensure the simulation continues
+        onboardingStep: state.onboardingStep,
+        messages: state.messages,
+        businessProfile: state.businessProfile,
+        departments: state.departments,
+        agents: state.agents,
+        tasks: state.tasks,
+        appMode: state.appMode,
+        achievements: state.achievements,
+        systemDate: state.systemDate,
+        theme: state.theme
+      }),
+    }
+  )
+);

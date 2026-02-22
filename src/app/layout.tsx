@@ -1,16 +1,20 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Patrick_Hand, Architects_Daughter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'sonner';
+import { cn } from "@/lib/utils";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const patrickHand = Patrick_Hand({
+  weight: "400",
   subsets: ["latin"],
+  variable: "--font-patrick",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const architects = Architects_Daughter({
+  weight: "400",
   subsets: ["latin"],
+  variable: "--font-architects",
 });
 
 export const metadata: Metadata = {
@@ -24,12 +28,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={cn(
+          "min-h-screen bg-paper font-patrick antialiased",
+          patrickHand.variable,
+          architects.variable
+        )}
       >
         {children}
-        <Toaster position="top-center" />
+        <Toaster position="top-center" toastOptions={{
+             className: 'doodle-card border-black bg-white font-patrick text-lg',
+             descriptionClassName: 'text-slate-600',
+        }} />
       </body>
     </html>
   );

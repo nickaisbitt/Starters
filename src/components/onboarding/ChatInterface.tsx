@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { useBusinessStore } from '@/store/useBusinessStore';
 import { simulateArchitectResponse, generateBusinessStructure } from '@/lib/ai-architect';
-import { Send, User, Bot, Sparkles } from 'lucide-react';
+import { Send, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function ChatInterface() {
@@ -39,7 +39,7 @@ export function ChatInterface() {
     if (messages.length === 0) {
       setIsTyping(true);
       setTimeout(() => {
-        addMessage('assistant', "Hello. I am The Architect. I'm here to help you incorporate your new venture. What are we building today?");
+        addMessage('assistant', "Oi! I'm The Architect. Let's make some mischief and build a company. What crazy idea are we cooking up today?");
         setIsTyping(false);
       }, 1000);
     }
@@ -58,11 +58,11 @@ export function ChatInterface() {
         updateBusinessProfile({ name: userMsg });
     } else if (!businessProfile.industry) {
         if (userMsg.toLowerCase().includes('tech') || userMsg.toLowerCase().includes('app')) {
-            updateBusinessProfile({ industry: 'Technology' });
+            updateBusinessProfile({ industry: 'Rocket Science' });
         } else if (userMsg.toLowerCase().includes('bakery') || userMsg.toLowerCase().includes('food')) {
-            updateBusinessProfile({ industry: 'Food & Beverage' });
+            updateBusinessProfile({ industry: 'Tasty Treats' });
         } else {
-             updateBusinessProfile({ industry: 'General Business' });
+             updateBusinessProfile({ industry: 'Global Domination' });
         }
     }
 
@@ -72,7 +72,7 @@ export function ChatInterface() {
     addMessage('assistant', response);
 
     // Check if ready to generate
-    if (response.includes("ready to build")) {
+    if (response.includes("ready to rock")) {
         setOnboardingStep('generating');
 
         // Trigger generation
@@ -94,56 +94,59 @@ export function ChatInterface() {
   };
 
   return (
-    <Card className="flex flex-col h-[600px] w-full max-w-2xl mx-auto shadow-xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 overflow-hidden">
-      <div className="p-4 border-b bg-slate-50 dark:bg-slate-900 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8 border-2 border-indigo-500">
-                <AvatarFallback>AI</AvatarFallback>
-                <AvatarImage src="https://api.dicebear.com/7.x/bottts/svg?seed=architect" />
-            </Avatar>
+    <Card className="flex flex-col h-[600px] w-full max-w-2xl mx-auto overflow-hidden doodle-card border-4 border-black dark:border-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rotate-1 transition-transform hover:rotate-0">
+      <div className="p-4 border-b-2 border-black border-dashed bg-yellow-50 dark:bg-zinc-900 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+            <div className="relative">
+                <Avatar className="h-12 w-12 border-2 border-black bg-white">
+                    <AvatarFallback>AI</AvatarFallback>
+                    <AvatarImage src="https://api.dicebear.com/7.x/notionists/svg?seed=Archie" />
+                </Avatar>
+                <div className="absolute -bottom-1 -right-1 bg-green-400 border-2 border-black w-4 h-4 rounded-full animate-pulse" />
+            </div>
             <div>
-                <h3 className="font-semibold text-sm">The Architect</h3>
-                <p className="text-xs text-muted-foreground">Genesis OS System</p>
+                <h3 className="font-bold text-xl font-architects">The Architect</h3>
+                <p className="text-sm font-patrick text-slate-600 dark:text-slate-400">Chief Visionary</p>
             </div>
         </div>
-        <div className="flex items-center gap-1">
-             <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-             <span className="text-xs text-muted-foreground">Online</span>
-        </div>
+        <Sparkles className="h-6 w-6 text-yellow-500 animate-bounce" />
       </div>
 
-      <ScrollArea ref={scrollRef} className="flex-1 p-4 space-y-4 overflow-y-auto">
+      <ScrollArea ref={scrollRef} className="flex-1 p-6 space-y-6 overflow-y-auto bg-white dark:bg-zinc-900 bg-[url('https://www.transparenttextures.com/patterns/notebook.png')]">
         <AnimatePresence>
             {messages.map((msg) => (
             <motion.div
                 key={msg.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
                 className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
                 <div
-                className={`flex gap-2 max-w-[80%] ${
+                className={`flex gap-3 max-w-[85%] items-end ${
                     msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'
                 }`}
                 >
-                <Avatar className="h-8 w-8 shrink-0">
+                <Avatar className="h-10 w-10 shrink-0 border-2 border-black bg-white">
                     {msg.role === 'user' ? (
                         <>
                              <AvatarFallback>ME</AvatarFallback>
-                             <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" />
+                             <AvatarImage src="https://api.dicebear.com/7.x/notionists/svg?seed=Me" />
                         </>
                     ) : (
                         <>
                             <AvatarFallback>AI</AvatarFallback>
-                            <AvatarImage src="https://api.dicebear.com/7.x/bottts/svg?seed=architect" />
+                            <AvatarImage src="https://api.dicebear.com/7.x/notionists/svg?seed=Archie" />
                         </>
                     )}
                 </Avatar>
+
+                {/* Speech Bubble Style */}
                 <div
-                    className={`rounded-2xl px-4 py-2 text-sm shadow-sm ${
+                    className={`relative px-5 py-3 text-lg font-patrick border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,0.2)] ${
                     msg.role === 'user'
-                        ? 'bg-indigo-600 text-white rounded-br-none'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-none'
+                        ? 'bg-blue-300 text-black rounded-t-xl rounded-bl-xl rounded-br-none rotate-1'
+                        : 'bg-white dark:bg-zinc-800 text-black dark:text-white rounded-t-xl rounded-br-xl rounded-bl-none -rotate-1'
                     }`}
                 >
                     {msg.content}
@@ -159,32 +162,32 @@ export function ChatInterface() {
             animate={{ opacity: 1, y: 0 }}
             className="flex w-full justify-start"
             >
-                <div className="flex gap-2 max-w-[80%]">
-                     <Avatar className="h-8 w-8 shrink-0">
+                <div className="flex gap-3 max-w-[80%] items-end">
+                     <Avatar className="h-10 w-10 shrink-0 border-2 border-black">
                         <AvatarFallback>AI</AvatarFallback>
-                        <AvatarImage src="https://api.dicebear.com/7.x/bottts/svg?seed=architect" />
+                        <AvatarImage src="https://api.dicebear.com/7.x/notionists/svg?seed=Archie" />
                      </Avatar>
-                     <div className="rounded-2xl px-4 py-3 bg-slate-100 dark:bg-slate-800 rounded-bl-none flex items-center gap-1">
-                         <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                         <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                         <div className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce" />
+                     <div className="rounded-t-xl rounded-br-xl rounded-bl-none border-2 border-black bg-white px-4 py-4 flex items-center gap-1.5 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)]">
+                         <div className="w-2 h-2 bg-black rounded-full animate-bounce [animation-delay:-0.3s]" />
+                         <div className="w-2 h-2 bg-black rounded-full animate-bounce [animation-delay:-0.15s]" />
+                         <div className="w-2 h-2 bg-black rounded-full animate-bounce" />
                      </div>
                 </div>
             </motion.div>
         )}
       </ScrollArea>
 
-      <div className="p-4 bg-white dark:bg-slate-950 border-t">
-        <div className="flex gap-2">
+      <div className="p-4 bg-yellow-50 dark:bg-zinc-900 border-t-2 border-black border-dashed">
+        <div className="flex gap-3">
           <Input
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Type your vision..."
-            className="flex-1 focus-visible:ring-indigo-500"
+            placeholder="Write your wild ideas..."
+            className="flex-1 text-lg bg-white border-2 border-black shadow-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none"
           />
-          <Button onClick={handleSendMessage} size="icon" className="bg-indigo-600 hover:bg-indigo-700">
-            <Send className="h-4 w-4" />
+          <Button onClick={handleSendMessage} size="icon" className="h-12 w-12 bg-black hover:bg-zinc-800 text-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:translate-y-0.5 hover:shadow-none transition-all">
+            <Send className="h-5 w-5" />
           </Button>
         </div>
       </div>

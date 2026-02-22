@@ -3,15 +3,15 @@
 
 import { useEffect, useState } from 'react';
 import { useBusinessStore } from '@/store/useBusinessStore';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Megaphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const MOCK_NEWS = [
-  { text: "Tech Sector rallies on AI breakthroughs", type: 'positive' },
-  { text: "Global supply chain disruptions expected in Q3", type: 'negative' },
-  { text: "Interest rates remain steady", type: 'neutral' },
-  { text: "New privacy regulations announced for SaaS", type: 'negative' },
-  { text: "Consumer spending index hits 5-year high", type: 'positive' },
+  { text: "CRYPTO CRASH! Or is it? Experts confused.", type: 'negative' },
+  { text: "Your competitor just tripped on stage. Shares up!", type: 'positive' },
+  { text: "New law passed: AI Agents must have tea breaks.", type: 'neutral' },
+  { text: "Elon tweeted something weird again.", type: 'negative' },
+  { text: "Consumer spending on 'shiny things' is up 200%.", type: 'positive' },
 ];
 
 export function MarketTicker() {
@@ -28,26 +28,30 @@ export function MarketTicker() {
   const currentNews = MOCK_NEWS[newsIndex];
 
   return (
-    <div className="w-full bg-slate-900 text-slate-100 text-xs py-1 px-4 flex items-center gap-4 overflow-hidden border-b border-slate-800">
-      <span className="font-bold text-indigo-400 shrink-0">MARKET FEED</span>
-      <div className="h-4 w-[1px] bg-slate-700 shrink-0" />
+    <div className="w-full bg-black text-white text-lg py-2 px-6 flex items-center gap-4 overflow-hidden border-b-4 border-yellow-400 font-architects shadow-[0px_4px_0px_0px_rgba(0,0,0,0.2)] z-30 relative transform -rotate-0.5">
+      <div className="flex items-center gap-2 text-yellow-400 font-black animate-pulse shrink-0">
+        <Megaphone className="h-5 w-5 rotate-12" />
+        <span>GOSSIP WIRE</span>
+      </div>
+
+      <div className="h-6 w-0.5 bg-yellow-400/50 shrink-0 rotate-12" />
 
       <motion.div
         key={newsIndex}
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -20, opacity: 0 }}
-        className="flex items-center gap-2 truncate"
+        className="flex items-center gap-2 truncate font-patrick tracking-wide flex-1"
       >
-        {currentNews.type === 'positive' && <TrendingUp className="h-3 w-3 text-green-500" />}
-        {currentNews.type === 'negative' && <TrendingDown className="h-3 w-3 text-red-500" />}
-        {currentNews.type === 'neutral' && <Minus className="h-3 w-3 text-gray-500" />}
+        {currentNews.type === 'positive' && <TrendingUp className="h-5 w-5 text-green-400" />}
+        {currentNews.type === 'negative' && <TrendingDown className="h-5 w-5 text-red-400" />}
+        {currentNews.type === 'neutral' && <Minus className="h-5 w-5 text-slate-400" />}
         <span className="truncate">{currentNews.text}</span>
       </motion.div>
 
-      <div className="ml-auto flex items-center gap-4 shrink-0 text-slate-500">
-         <span>NASDAQ: <span className="text-green-500">+1.2%</span></span>
-         <span>S&P 500: <span className="text-red-500">-0.4%</span></span>
+      <div className="ml-auto flex items-center gap-6 shrink-0 text-sm font-mono text-slate-300 hidden md:flex">
+         <span className="flex items-center gap-1">NASDAQ <span className="text-green-400 font-bold bg-green-900/30 px-1 rounded">+1.2%</span></span>
+         <span className="flex items-center gap-1">S&P 500 <span className="text-red-400 font-bold bg-red-900/30 px-1 rounded">-0.4%</span></span>
       </div>
     </div>
   );

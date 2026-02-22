@@ -2,11 +2,12 @@
 
 import { Agent, Department, Task } from '@/types';
 
+// Branson-esque Persona
 const RESPONSES = [
-  "That's an interesting concept. Can you tell me more about your target audience?",
-  "Understood. What are the key revenue streams you envision?",
-  "Great. And what is your unfair advantage in this market?",
-  "Excellent. I have enough information to incorporate your digital entity. Shall we proceed?"
+  "Alright, mate! That sounds like a bloody brilliant start. But tell me, who are these people actually? Who's the crowd we're serving?",
+  "Fantastic. Now, let's talk brass tacks. How are we going to make this thing print money? Where's the treasure chest?",
+  "I love the ambition! But what's the 'secret sauce'? Why will they choose us over the boring old guard?",
+  "You're speaking my language! I've got enough to sketch out a master plan. Shall we push the button and make some magic happen?"
 ];
 
 export const simulateArchitectResponse = async (message: string, step: number): Promise<string> => {
@@ -16,7 +17,7 @@ export const simulateArchitectResponse = async (message: string, step: number): 
   if (step < RESPONSES.length) {
     return RESPONSES[step];
   }
-  return "I'm ready to build your organization.";
+  return "I'm ready to rock and roll. Let's build this empire!";
 };
 
 export const generateBusinessStructure = (industry: string): { departments: Department[], agents: Agent[], tasks: Task[] } => {
@@ -25,68 +26,72 @@ export const generateBusinessStructure = (industry: string): { departments: Depa
   const departments: Department[] = [
     {
       id: 'dept-exec',
-      name: 'Executive',
+      name: 'The Cockpit', // Renamed from Executive
       headAgentId: 'agent-ceo',
-      responsibilities: ['Strategy', 'Fundraising'],
-      color: '#cbd5e1'
+      responsibilities: ['Big Picture', 'Schmoozing'],
+      color: '#fcd34d' // yellow-300
     },
     {
       id: 'dept-prod',
-      name: isTech ? 'Product & Engineering' : 'Product',
+      name: isTech ? 'The Lab' : 'The Kitchen', // Renamed
       headAgentId: 'agent-cto',
-      responsibilities: ['Development', 'QA'],
-      color: '#3b82f6'
+      responsibilities: ['Invention', 'Magic'],
+      color: '#60a5fa' // blue-400
     },
     {
       id: 'dept-growth',
-      name: 'Growth & Marketing',
+      name: 'Hype Squad', // Renamed from Growth
       headAgentId: 'agent-cmo',
-      responsibilities: ['Ads', 'Content', 'Social'],
-      color: '#10b981'
+      responsibilities: ['Noise', 'Virality', 'Parties'],
+      color: '#f472b6' // pink-400
     },
      {
       id: 'dept-ops',
-      name: 'Operations',
+      name: 'Engine Room', // Renamed
       headAgentId: 'agent-coo',
-      responsibilities: ['Logistics', 'Support'],
-      color: '#f59e0b'
+      responsibilities: ['Oil & Gears', 'Firefighting'],
+      color: '#fb923c' // orange-400
     }
   ];
 
   const agents: Agent[] = [
     {
       id: 'agent-ceo',
-      name: 'Chief of Staff',
-      role: 'CEO',
+      name: 'Sir Richard',
+      role: 'Chief Troublemaker',
       status: 'working',
-      currentTask: 'Reviewing quarterly goals'
+      currentTask: 'Dreaming big',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Richard&clothing=blazerAndShirt&top=shortHair'
     },
     {
       id: 'agent-cto',
-      name: 'Devin',
-      role: isTech ? 'CTO' : 'Head of Product',
+      name: 'Q',
+      role: isTech ? 'Mad Scientist' : 'Head Chef',
       status: 'thinking',
-      currentTask: 'Architecting system core'
+      currentTask: 'Breaking things',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Q&accessories=glasses'
     },
     {
       id: 'agent-cmo',
-      name: 'Sarah',
-      role: 'CMO',
+      name: 'Coco',
+      role: 'Chief of Vibez',
       status: 'idle',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Coco&top=longHair'
     },
      {
       id: 'agent-coo',
-      name: 'Marcus',
-      role: 'COO',
+      name: 'Sarge',
+      role: 'The Fixer',
       status: 'working',
-      currentTask: 'Optimizing supply chain'
+      currentTask: 'Herding cats',
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarge&facialHair=beardLight'
     }
   ];
 
   const tasks: Task[] = [
     {
       id: 'task-1',
-      title: 'Incorporate Company',
+      title: 'Shake Hands & Kiss Babies',
       departmentId: 'dept-exec',
       assignedAgentId: 'agent-ceo',
       status: 'done',
@@ -97,7 +102,7 @@ export const generateBusinessStructure = (industry: string): { departments: Depa
     },
     {
       id: 'task-2',
-      title: 'Define MVP Scope',
+      title: 'Build the Prototype',
       departmentId: 'dept-prod',
       assignedAgentId: 'agent-cto',
       status: 'in-progress',
@@ -108,7 +113,7 @@ export const generateBusinessStructure = (industry: string): { departments: Depa
     },
     {
       id: 'task-3',
-      title: 'Setup Social Media Handles',
+      title: 'Leak a Rumor to Press',
       departmentId: 'dept-growth',
       assignedAgentId: 'agent-cmo',
       status: 'todo',

@@ -10,10 +10,10 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Headquarters', icon: LayoutDashboard },
-  { href: '/dashboard/org-chart', label: 'Org Structure', icon: Users },
-  { href: '/dashboard/roadmap', label: 'Strategy Map', icon: GitBranch },
-  { href: '/dashboard/agents', label: 'Agent Comms', icon: MessageSquare },
+  { href: '/dashboard', label: 'The War Room', icon: LayoutDashboard }, // Renamed
+  { href: '/dashboard/org-chart', label: 'The Dream Team', icon: Users }, // Renamed
+  { href: '/dashboard/roadmap', label: 'Master Plan', icon: GitBranch }, // Renamed
+  { href: '/dashboard/agents', label: 'Agent Chatter', icon: MessageSquare }, // Renamed
 ];
 
 export function Sidebar() {
@@ -23,13 +23,13 @@ export function Sidebar() {
   return (
     <aside
         className={cn(
-            "fixed left-0 top-0 bottom-0 z-40 w-64 border-r bg-background transition-all duration-300 md:translate-x-0 shadow-sm",
-            !isSidebarOpen && "w-20" // Collapsed state width
+            "fixed left-0 top-0 bottom-0 z-40 w-64 border-r-2 border-black bg-paper transition-all duration-300 md:translate-x-0 shadow-[4px_0px_0px_0px_rgba(0,0,0,1)]",
+            !isSidebarOpen && "w-20"
         )}
     >
-      <div className={cn("flex h-16 items-center border-b px-6 transition-all", !isSidebarOpen && "justify-center px-0")}>
-        <Link href="/dashboard" className="flex items-center gap-2 font-bold text-lg overflow-hidden">
-           <div className="h-8 w-8 min-w-[2rem] rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-md">
+      <div className={cn("flex h-20 items-center border-b-2 border-dashed border-black px-6 transition-all bg-yellow-300", !isSidebarOpen && "justify-center px-0")}>
+        <Link href="/dashboard" className="flex items-center gap-3 font-bold text-xl overflow-hidden group">
+           <div className="h-10 w-10 min-w-[2.5rem] rounded-sm border-2 border-black bg-white flex items-center justify-center text-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-all">
                 {businessProfile.name ? businessProfile.name.charAt(0).toUpperCase() : 'G'}
            </div>
            {isSidebarOpen && (
@@ -37,7 +37,7 @@ export function Sidebar() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="truncate max-w-[140px]"
+                    className="truncate max-w-[140px] font-architects uppercase tracking-wider"
                 >
                     {businessProfile.name || 'Genesis OS'}
                 </motion.span>
@@ -45,8 +45,8 @@ export function Sidebar() {
         </Link>
       </div>
 
-      <div className="flex flex-col h-[calc(100vh-4rem)] justify-between py-4">
-          <nav className="space-y-1 px-3">
+      <div className="flex flex-col h-[calc(100vh-5rem)] justify-between py-6">
+          <nav className="space-y-2 px-3">
             {NAV_ITEMS.map((item) => {
               const isActive = pathname === item.href;
               const Icon = item.icon;
@@ -55,22 +55,22 @@ export function Sidebar() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:text-indigo-600",
+                    "flex items-center gap-3 rounded-sm border-2 border-transparent px-3 py-3 text-lg font-bold transition-all hover:bg-white hover:border-black hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5",
                     isActive
-                        ? "bg-indigo-50 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400"
-                        : "text-muted-foreground hover:bg-slate-100 dark:hover:bg-slate-800",
+                        ? "bg-white border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-black"
+                        : "text-slate-600 dark:text-slate-400 hover:text-black",
                     !isSidebarOpen && "justify-center px-2"
                   )}
                   title={!isSidebarOpen ? item.label : undefined}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className="h-6 w-6 stroke-2" />
                   {isSidebarOpen && (
-                      <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="font-architects">
                         {item.label}
                       </motion.span>
                   )}
-                  {item.label === 'Agent Comms' && isSidebarOpen && (
-                       <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] text-white animate-pulse">3</span>
+                  {item.label === 'Agent Chatter' && isSidebarOpen && (
+                       <span className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-red-500 border-2 border-black text-xs font-bold text-white animate-bounce">3</span>
                   )}
                 </Link>
               );
@@ -78,40 +78,40 @@ export function Sidebar() {
           </nav>
 
           <div className="px-4 space-y-4">
-               {/* Simulation Status - Only visible when expanded */}
+               {/* Simulation Status */}
                {isSidebarOpen && appMode === 'simulation' && (
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="p-3 bg-slate-900 rounded-lg border border-slate-800 text-white text-xs space-y-2 shadow-inner"
+                        className="p-4 bg-black rounded-sm border-2 border-black text-white text-xs space-y-2 shadow-[4px_4px_0px_0px_rgba(100,100,100,1)] rotate-1"
                     >
-                        <div className="flex items-center justify-between font-semibold text-green-400">
-                             <span>System Status</span>
-                             <span className="animate-pulse">● Online</span>
+                        <div className="flex items-center justify-between font-bold text-green-400 uppercase tracking-widest font-architects text-sm">
+                             <span>System Live</span>
+                             <span className="animate-pulse text-xl">●</span>
                         </div>
-                        <div className="flex justify-between text-slate-400">
-                            <span>CPU Usage</span>
-                            <span>12%</span>
+                        <div className="flex justify-between font-mono">
+                            <span>CPU Heat</span>
+                            <span className="text-red-400">HOT!</span>
                         </div>
-                         <div className="flex justify-between text-slate-400">
-                            <span>Agents Active</span>
-                            <span>4/4</span>
+                         <div className="flex justify-between font-mono">
+                            <span>Minions</span>
+                            <span>4/4 Working</span>
                         </div>
                     </motion.div>
                )}
 
-               {/* Theme & Focus Toggles */}
+               {/* Toggles */}
                <div className={cn("flex flex-col gap-2", !isSidebarOpen && "items-center")}>
                     {isSidebarOpen ? (
-                        <div className="flex items-center justify-between px-2 py-2 text-sm text-muted-foreground">
+                        <div className="flex items-center justify-between px-2 py-2 text-sm font-bold border-t-2 border-black border-dashed pt-4">
                             <span>Theme</span>
-                            <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8">
-                                {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                            <Button variant="outline" size="icon" onClick={toggleTheme} className="h-10 w-10 rounded-full bg-yellow-200">
+                                {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                             </Button>
                         </div>
                     ) : (
-                        <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8 text-muted-foreground">
-                             {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                        <Button variant="outline" size="icon" onClick={toggleTheme} className="h-10 w-10 rounded-full bg-yellow-200">
+                             {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
                         </Button>
                     )}
 
@@ -119,15 +119,15 @@ export function Sidebar() {
                         variant="ghost"
                         size={isSidebarOpen ? "sm" : "icon"}
                         onClick={toggleSidebar}
-                        className={cn("w-full justify-start text-muted-foreground hover:text-foreground", !isSidebarOpen && "justify-center")}
+                        className={cn("w-full justify-start text-slate-500 hover:text-black font-architects", !isSidebarOpen && "justify-center")}
                     >
                         {isSidebarOpen ? (
                             <>
-                                <ChevronLeft className="h-4 w-4 mr-2" />
-                                <span>Collapse Menu</span>
+                                <ChevronLeft className="h-5 w-5 mr-2" />
+                                <span>Fold Menu</span>
                             </>
                         ) : (
-                            <ChevronRight className="h-4 w-4" />
+                            <ChevronRight className="h-5 w-5" />
                         )}
                     </Button>
                </div>
